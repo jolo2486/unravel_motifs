@@ -1,0 +1,349 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="logo.css" >
+
+
+<title>WebLogo 3 - Create </title>
+<meta name="author" content="Gavin E. Crooks" >
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+
+<style type="text/css">
+td {
+    border-left : white solid 4pt
+}
+.error { 
+    color: #900;
+    border-left: red solid +4pt;
+}
+
+.err_msg { 
+    color: #900;
+}
+
+</style>
+</head>
+
+<body style="align:center">
+
+
+
+
+
+<form method="post" name="logoform" action="create.cgi" enctype="multipart/form-data" >
+<table width="80%" border = '0' cellspacing='0' cellpadding='1' align="center">
+<tr><td >
+<h1> WebLogo 3 : Create</h1>
+
+</td><td align = "right"> 
+    &middot; 
+  <a href="./">about</a>&nbsp;&middot;
+  <a class="selected" href="create.cgi">create</a>&nbsp;&middot; 
+  <a href="examples.html">examples</a>&nbsp;&middot; 
+  <a href="manual.html">manual</a>&nbsp;&middot; 
+<br>
+<span style="font-size:small">WebLogo 3.4 (2014-06-03)</span>&nbsp;&nbsp;
+</td></tr>
+
+<tr><td >
+Sequence data
+</td><td > 
+<input type="file" name="sequences_file"   > 
+</td></tr>
+
+<tr><td >
+</td><td> 
+<span style="font-size:small ">(or paste sequence data below)</span>
+</td></tr>
+
+
+
+<tr><td colspan='2'  >
+<!-- maxlength should be larger than SEQUENCES_MAXLENGTH set in code-->
+<textarea name="sequences" rows="12" cols ="100" maxlength="200000" style="width:100%"></textarea>
+</td></tr>
+
+
+
+<tr><td align="left">
+<input type="button" name="cmd_clear" value="Clear" onclick="document.logoform.sequences.value='';" >
+</td><td align="right">
+<input  style="font-size:large" type="submit" name="cmd_create" value="&nbsp;Create&nbsp;Logo&nbsp;&nbsp;&nbsp;&nbsp;"  > <br>
+<span style="font-size:small"><input type="checkbox" name="download" value="false" >Download</span>
+</td></tr>
+     
+
+<!-- Reset defaults must come after create_logo so that hitting enter creates a logo-->  
+<!--
+<tr><td>
+<input type="submit" name="cmd_reset" value="Reset defaults" >
+</td><td  class="err_msg" rowspan="2">
+ &nbsp;
+</td></tr>
+<tr><td>&nbsp;</td></tr>
+-->
+
+<tr><td colspan='2' style="height:30pt;border-left-width:90pt;" class="err_msg">
+
+</td></tr>
+
+    
+     
+<tr><td  >
+Output format </td><td>
+<select name="format">
+<option selected value="png">PNG (low res.)</option>
+<option  value="png_print">PNG (high res.)</option>
+<option  value="jpeg">JPEG (low res.)</option>
+<option  value="eps">EPS (vector)</option>
+<option  value="pdf">PDF (vector)</option>
+<option  value="svg">SVG (vector)</option>
+<option  value="logodata">Data (plain text)</option> 
+</select> 
+
+</td></tr>
+
+<tr><td ${size_err} >
+Logo size 
+</td><td >
+<select name="stack_width" >
+<option  >small</option>
+<option selected>medium</option>
+<option  >large</option>
+</select> 
+</td></tr>
+
+
+<tr><td >
+    Stacks per line
+</td><td>
+<input type="text" name="stacks_per_line" value="40" size="4" maxlength="4" >
+</td></tr>
+
+<tr><td >
+Sequence type </td><td>
+
+<select name="alphabet">
+<option selected value="alphabet_auto" >auto</option>
+<option  value="alphabet_protein">protein</option>
+<option  value="alphabet_dna">dna</option>
+<option  value="alphabet_rna">rna</option>
+</select> 
+</td></tr>
+
+<tr><td>
+Ignore lower case
+</td><td>
+<input type="checkbox" name="ignore_lower_case" value="true"  > 
+</td></tr>
+
+
+<tr><td>
+Units </td><td>
+<select name="unit_name"  >
+<option  >probability</option>
+<option selected >bits</option>
+<option  >nats</option>
+<option  >kT</option>
+<option  >kJ/mol</option>
+<option  >kcal/mol</option>
+</select> 
+
+</td></tr>
+
+<tr><td >
+First position number
+</td><td>
+<input  type="text" name="first_index" value="1" size="4" maxlength="80" >
+</td></tr>
+
+<tr><td  >
+Logo range </td><td>
+<input type="text" name="logo_start" value="" size="4" maxlength="80" > - <input type="text" name="logo_end"  value="" size="4" maxlength="80" >
+</td></tr>
+
+
+
+<tr><td >
+Composition
+</td><td>
+<select name="composition" >
+<option  value = "comp_none" >No adjustment for composition</option>
+<option selected value = "comp_auto" >auto</option>
+<option  value = "comp_equiprobable"  >equiprobable</option>
+<option  value="comp_CG" >Percentage CG &#8658;</option>
+<option  value="comp_Celegans" >C. elegans (36%) </option>
+<option  value="comp_Dmelanogaster" >D. melanogaster (43%)</option>
+<option  value="comp_Ecoli" >E. coli (50.5%) </option>
+<option  value="comp_Hsapiens" >H. sapiens (40%) </option>
+<option   value="comp_Mmusculus" >M. musculus (42%)</option>
+<option  value="comp_Scerevisiae" >S. cerevisiae (38%) </option>
+</select>
+or
+<input type="text" name="percentCG" value="" size="4" maxlength="8"   >  % CG
+</td></tr>
+
+<tr><td>
+Scale stack widths
+</td><td>
+<input type="checkbox" name="scale_width" value="true" checked > 
+</td></tr>
+
+<tr><td>
+Error bars
+</td><td>
+ <input type="checkbox" name="show_errorbars" value="true" checked  >
+</td></tr>
+ 
+
+
+
+
+
+<tr    ><td >
+Title
+</td><td >
+<input   type="text"  name="logo_title"  size="52" maxlength="80" value="" > 
+</td></tr>
+
+<tr><td>
+Figure label</td><td>
+<input type="text" name="logo_label"  value="" size="4" maxlength="100" > 
+</td></tr>
+
+
+<tr><td>
+X-axis
+</td><td>
+<input type="checkbox" name="show_xaxis" value="true" checked >
+Label: 
+<input type="text" name="xaxis_label"  value="" size="20" maxlength="100" >  
+</td></tr>
+
+
+<tr><td>
+Y-axis
+</td><td>
+<input type="checkbox" name="show_yaxis" value="true" checked > 
+Label: <input type="text" name="yaxis_label" value="auto" size="20" maxlength="32" >  
+
+</td></tr>
+
+<tr><td  >
+Y-axis scale:
+</td><td>
+<input type="text" name="yaxis_scale"  value="auto" size="4" maxlength="100"  > 
+</td></tr>
+
+ <tr><td  >
+Y-axis tic spacing:
+</td><td>
+<input type="text" name="yaxis_tic_interval" value="1.0"  size="4" maxlength="100"  > 
+</td></tr>
+
+
+
+<tr><td>
+Sequence end labels
+</td><td>
+<input type="checkbox" name="show_ends" value="true"  > 
+</td></tr>
+  
+<tr><td>
+Version fineprint 
+  </td><td>
+<input type="checkbox" name="show_fineprint" value="true" checked >
+</td></tr>
+
+
+
+
+<tr><td  >Color scheme
+</td><td>
+<select name="color_scheme"  >
+<option selected value="color_auto">Auto</option>
+<option  value="color_monochrome" >Monochrome</option>
+<option  value="color_base_pairing">Base pairing (NA default)</option>
+<option  value="color_classic">Classic (NA)</option>
+<option  value="color_hydrophobicity">Hydrophobicity (AA default)</option>
+<option  value="color_chemistry">Chemistry (AA)</option>
+<option  value="color_charge">Charge (AA)</option>
+<option  value="color_custom">Custom (Specify below)</option>
+</select> 
+<!--&nbsp; Color key:
+<input type="checkbox" name="show_color_key" value="true" ${show_color_key} disabled >
+-->
+</td></tr>
+
+<tr><td></td><td>
+<table cellpadding="0" cellspacing="0"  style="font-size:small">
+<tr>
+<td>Symbols</td><td>Color</td> <!--<td>Description</td>-->
+</tr>
+
+<tr >
+<td ><input name="symbols0" type="text"  size="16" maxlength="64" value=""></td>
+<td><input name="color0" type="text"  size="16" maxlength="64"  value=""></td>
+<!--<td><input name="desc0"  size="16" maxlength="64"  value=""></td> -->
+</tr>
+
+<tr >
+<td ><input name="symbols1" type="text"  size="16" maxlength="64" value=""></td>
+<td><input name="color1" type="text"  size="16" maxlength="64"  value=""></td>
+<!--<td><input name="desc1"  size="16" maxlength="64"  value=""></td>-->
+</tr>
+
+<tr>
+<td ><input name="symbols2" type="text"  size="16" maxlength="64" value=""></td>
+<td><input name="color2" type="text"  size="16" maxlength="64"  value=""></td>
+<!--<td><input name="desc2"  size="16" maxlength="64"  value=""></td>-->
+</tr>
+
+<tr>
+<td ><input name="symbols3" type="text"  size="16" maxlength="64" value=""></td>
+<td><input name="color3" type="text"  size="16" maxlength="64"  value=""></td>
+<!--<td><input name="desc3"  size="16" maxlength="64"  value=""></td>-->
+</tr>
+
+<tr>
+<td ><input name="symbols4" type="text"  size="16" maxlength="64" value=""></td>
+<td><input name="color4" type="text"  size="16" maxlength="64"  value=""></td>
+<!--<td><input name="desc4"  size="16" maxlength="64"  value=""></td>-->
+</tr>
+
+
+
+</table>
+</td></tr>
+
+ <tr><td>
+&nbsp; 
+</td><td>
+&nbsp;
+</td></tr>
+      
+<tr><td>
+<input type="submit" name="cmd_reset" value="Reset defaults" >
+</td><td align="right">
+<input  style="font-size:large" type="submit" name="cmd_create" value="&nbsp;Create&nbsp;Logo&nbsp;&nbsp;&nbsp;&nbsp;"  >
+</td></tr>
+     
+     
+
+
+</table>
+</form>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-5951066-1");
+pageTracker._trackPageview();
+</script>
+</body>
+</html>
+
