@@ -22,14 +22,15 @@ import argparse, sys, time
 # You have a FASTA file with a number of sequences aligned so that the 
 # start codon "ATG" is at position 16 and you wish to prepare output for creating
 # a sequence logo using 15 nucleotides before the start codon and 15 after.
+# The file tests/homo_sapiens_ch1_genes_upstream15.fa contains 42 genes from
+# homo sapiens chromosome 1.
 # Executing...
-# ./cutseq.py -n ATG -p 16 -l 33 -r -o sequences.fa ../hg/homo_sapiens_genes_upstream15.fa
+# ./cutseq.py -n ATG -p 16 -l 33 -r ../tests/homo_sapiens_ch1_genes_upstream15.fa
 # OR
-# ./cutseq.py -n ATG -p 16 -s 1 -e 33 -r -o sequences.fa ../hg/homo_sapiens_genes_upstream15.fa
+# ./cutseq.py -n ATG -p 16 -s 1 -e 33 -r ../tests/homo_sapiens_ch1_genes_upstream15.fa
 # gives you a file like this:
-# CCGCGCGCAACAGCC---GCTTTTAAGGATACC
-# TCAACTCTGGAGGCA---GGTCGAAAGGAAGAA
-# NTGAACTTACTGCTTCTTCGGACAGTGGGCATG
+# CGAGCGGCCGCCAAC---CTCTTTGAGGGCTTG
+# TTTCCGACGGAGTGA---GCGGCGGCGGCTGGG
 # ...
 
 class CutSeq:
