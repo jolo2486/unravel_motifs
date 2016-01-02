@@ -47,7 +47,6 @@ def main():
 	parser = argparse.ArgumentParser(description="createlogo uses the Berkeley weblogo service to create a sequence logo from a flat format text file of aligned sequences.")
 	parser.add_argument('-y', help='Set y axis scale.', default = 1.0)
 	parser.add_argument('-t', help='Set logo title.', default = "")
-	# Set optional argument infile from which input is read
 	parser.add_argument('-o', default="outlogo.png", help='Name of the PNG format output file')
 	parser.add_argument('infile', type=argparse.FileType('r'), nargs='*', default=sys.stdin,
 		help='File(s) in flat format with sequences aligned. If omitted input is read from stdin.')
