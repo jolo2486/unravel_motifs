@@ -46,11 +46,13 @@ class CutSeq:
 		"""
 		if isinstance(fileResources, list) == False: self.fileResources = [fileResources]
 		else: self.fileResources = fileResources
+		self.format = format
 		self.length = False
 		self.skipSeq = False
 		self.start = 0
 		self.end = False
 		self.n = 0
+		self.reverse = False
 	
 	# Option -l
 	def setLength(self, length):
@@ -112,7 +114,10 @@ class CutSeq:
 	def _toInteger(self, integer, error):
 		try:
 			i = int(integer)
-			if i <= 0: raise ValueError(error)
+			if i == 0: raise ValueError(error)
+			if i < 0:
+				self.reverse = True
+				i = -i
 			return i
 		except Exception:
 			raise ValueError(error)
@@ -153,7 +158,11 @@ class CutSeq:
 		for file in self.fileResources:
 			for acc in SeqIO.parse(file, self.format):
 				self._progress()
-				piece = self._cut(str(acc.seq))
+				# Reverse string if any negative positional argument has been passed
+				if self.reverse == False: piece = self._cut(str(acc.seq))
+				else: 
+					piece = self._cut(str(acc.seq)[::-1])
+					if piece != False: piece = piece[::-1]
 				if self.headers: output += '>' + acc.id + '\n'
 				if piece != False: output += piece + '\n'
 		if self.report:
@@ -162,17 +171,21 @@ class CutSeq:
 		
 def main():
 	# Set program description
-	parser = argparse.ArgumentParser(description="CutSeq cuts out portions from nucleotide or amino acid sequences from FASTA formatted files. 2015 (c) Lord Jangmo Software Curp.")
+	parser = argparse.ArgumentParser(description="""CutSeq cuts out portions from nucleotide or amino acid sequences from FASTA formatted files. 
+	Option -l sets length of extraction, if start position -s is omitted the sequence is read from first letter. -e specifies end position which
+	can be used instead of -l. If any of -l, -s or -e is negative, the extraction is done with the sequence reversed. -n and -p can be used to
+	skip letters -n starting at position -p. If -n is present, each letter in -n is replaced with '-'. All operations are case sensitive.
+	2015 (c) Lord Jangmo Software Curp.""")
 	# Set options
 	parser.add_argument('-r', help='Display process report.', action='store_const', const=True, default=False)
-	parser.add_argument('-l', help='Set length of sequence to extract')
-	parser.add_argument('-f', help='Set format of input data, can be any accepted by BioPython, defaults to FASTA', default='fasta')
-	parser.add_argument('-n', help='Set letters to skip')
-	parser.add_argument('-p', help='Start position of letters to skip')
-	parser.add_argument('-s', help='Set starting position of extraction')
-	parser.add_argument('-e', help='Set ending position of extraction', default=False)
+	parser.add_argument('-l', metavar='length', help='Set length of sequence to extract')
+	parser.add_argument('-f', metavar='format', help='Set format of input data, can be any accepted by BioPython, defaults to FASTA', default='fasta')
+	parser.add_argument('-n', metavar='letters', help='Set letters to skip')
+	parser.add_argument('-p', metavar='skip start position', help='Start position of letters to skip')
+	parser.add_argument('-s', metavar='start position', default=1, help='Set starting position of extraction')
+	parser.add_argument('-e', metavar='end position', help='Set ending position of extraction', default=False)
 	parser.add_argument('-d', help='Include description headers of sequences', action='store_const', const=True, default=False)
-	parser.add_argument('-o', type=argparse.FileType('w'), default=False, help='Direct output to file')
+	parser.add_argument('-o', metavar='filename', type=argparse.FileType('w'), default=False, help='Direct output to file')
 	# Set optional argument infile from which input is read
 	parser.add_argument('infile', type=argparse.FileType('r'), nargs='*', default=sys.stdin,
 		help='File(s) containing FASTA formatted nucleotide sequences. If omitted input is read from stdin')
@@ -180,18 +193,16 @@ def main():
 	args = parser.parse_args()
 	try:
 		# Create a CutSeq object and set some options
-		c = CutSeq(args.infile).setHeaders(args.d).setReport(args.r).setFormat(args.f)
+		c = CutSeq(args.infile).setHeaders(args.d).setReport(args.r).setFormat(args.f).setStartEnd(args.s, args.e)
 		if args.l != None:
 			c.setLength(args.l)
 		if args.n != None and args.p != None:
 			c.setSkip(args.n, args.p)
 		elif (args.n != None and args.p == None) or (args.n == None and args.p != None):
 			raise Exception('Both -s and -p need to be specified')
-		if args.s != None:
-			c.setStartEnd(args.s, args.e)
 		# Direct output to file if -o is specified, otherwise stdout
 		if args.o != False: args.o.write(str(c))
-		else: print c,
+		else: print str(c),
 	except KeyboardInterrupt:
 		print("\nInterrupted by user.\nGoodbye!")
 	except Exception as e:
@@ -200,6 +211,3 @@ def main():
 
 if __name__ == '__main__':
 	main()
-#print 'a\r',
-#print 'b'
-#align(file, 'ATG', 15)
