@@ -192,6 +192,8 @@ The purpose of our work has been to create sequence logos for regions in the hum
 % "Models" is not a valid title for PLoS ONE authors. However, PLoS ONE
 % authors may use "Analysis" 
 \section*{Materials and Methods}
+For the genetic information we need we have used Ensamble's Biomart \cite{bib3} mostly because of our prior knowledge of the application but also for its popularity. As a programming language we choose Python and more specifically the package Biopython \cite{bib4}. The python programs we have written and use through out this project are \href{https://github.com/jolo2486/unravel_motifs/blob/master/bin/mergeseq.py}{mergeseq.py}, \href{https://github.com/jolo2486/unravel_motifs/blob/master/bin/cutseq.py}{cutseq.py} and \href{https://github.com/jolo2486/unravel_motifs/blob/master/bin/createlogo.py}{createlogo.py}.
+
 \subsection*{Gathering gene data}
 
 % For figure citations, please use "Fig." instead of "Figure".
@@ -201,22 +203,23 @@ The purpose of our work has been to create sequence logos for regions in the hum
 \label{fig1}
 \end{figure}
 
-Having decided on using as much of the human genome as possible we gathered the data using Ensamble's Biomart \cite{bib3}. We have used the december 2013 Homo sapiens high coverage assembly GRCh38. At Biomart we choose the "Ensambl Genes 83" database with the dataset GRCh38.p5. We divided this work up into two parts: retrieving the sequences before and after the translation start site and retrieving the sequences from the beginning and end of the first intron.
+Having decided on using as much of the human genome as possible we gathered the data using Biomart. We have used the december 2013 Homo sapiens high coverage assembly GRCh38 ("Ensambl Genes 83"/GRCh38.p5). We divided this work up into two parts: retrieving the sequences before and after the translation start site and retrieving the sequences from the beginning and end of the first intron.
 
-Solving the first part was easy enough. From the dataset mentioned above (GRCh38.p5) we selected only coding sequences as these all start with the initiation codon. Further we added 15 nucleotides upstream to these sequences in our query to include an appropriate number of nucleotides before and after the start codon for our analysis.
+Solving the first part was easy enough. From the dataset mentioned above (GRCh38.p5) we selected only coding sequences as these all start with the initiation codon. Further we added 15 nucleotides upstream to these sequences in our query to include an appropriate number of nucleotides before and after the start codon for our analysis. This was done on chromosomes 1-22, X and Y. An URL query to Biomart for this data, called Query 1, is attached as a reference \cite{bib7}.
 
 In retrieving the introns this proved to be a bit more tedious as Biomart does not directly supply intron sequences. Studying the structure of a gene, seen in \textit{Fig} \ref{fig1}, one could though come to some conclusions. A gene include both non coding parts such as UTR:s and introns, and coding parts which consist of parts of one or more exons. Exons include the 5' and 3' UTR:s and a number of exons are spliced out to assemble a transcript which are further spliced to become a coding sequence. Thus taking the difference of the complete genes and the exons will leave the introns. As we also want to include regions upstream the start of the introns as well as downstream the end of them we achieve this by using nucleotide coordinates. This method is also convenient for other more obvious reasons as we are dealing with large amounts of data (all unspliced genes from the human genome accumulates to approx. 1.8 Gb of data). Picking out the sequences of interest by using coordinates limits the amount of data we would have to process and therefore greatly improves processing times.
 
-Using this data we now continue by, more precisely filtering out the sequences to use as a base for the logo. We then need to align them and automate the logo creation. We implement all this using Python and more specifically the package Biopython \cite{bib4}.
+We retrieved the whole unspliced genes for chromosomes 1-22, X, Y and the Exon sequences for the same using Query 2 \cite{8} and Query 3 \cite{9} respectively. The actual sequences of the exons might seem a bit redundant as we are only using the coordinates of the exons and as they are already present in the unspliced gene. However these were included for control purposes, to fail check our software and make sure it really did pick out the correct sequences as introns and exons.
 
 \subsection*{Processing gene data}
+Using the data from the previous section we now continue by filtering out the sequences to use as a base for the logo. We then need to align them in a text file in preparation for the logo creation. We implement all this using Python and the two programs doing all the work for this part are \href{https://github.com/jolo2486/unravel_motifs/blob/master/bin/mergeseq.py}{mergeseq.py} and \href{https://github.com/jolo2486/unravel_motifs/blob/master/bin/cutseq.py}{cutseq.py}.
 
 -HIS EXCELLENCY ANDREAS CONTINUES HERE BY EXPLAINING IN MORE DETAIL ABOUT OUR ALGORITHM FOR THIS-
 
 \subsection*{Creating sequence logos}
 For sequence logo creation there are a few tools at our disposal. We choose to use Steven Brenner's WebLogo \cite{bib6} for its simplicity and the possibility of accessing this tool via the function weblogo() in the Biopython class motifs. Weblogo is mainly used through their web application which we initially used for experimental purposes. It can also be used by downloading their source code, by using their python package or from a third party software such as Biopython. We choose to implement this using the above mentioned function weblogo() in Biopython. Weblogo uses a multiple sequence alignment as a basis for logo creation. Three file formats for these alignments are available: FASTA, ClustalW and Flat. Flat format means that the sequences are just listed on top of each other without sequence names or other header information. Since we had no use for header information at this point, Flat format was definitely most suited for our purposes. 
 
-Using the flat formatted alignment files created in the previous step a python program called createlogo.py goes through each line of the file and adds that sequence as a Biopython Seq object to a list. From this list a Biopython motif object is created and from this object the logo is created by connecting to the weblogo service via the function weblogo() in the motifs class. Thus one needs an internet connection to use this program. The output of createlogo.py is simply a PNG file displaying the logo.
+Using the flat formatted alignment files created in the previous step a python program called \href{https://github.com/jolo2486/unravel_motifs/blob/master/bin/createlogo.py}{createlogo.py} goes through each line of the file and adds that sequence as a Biopython Seq object to a list. From this list a Biopython motif object is created and from this object the logo is created by connecting to the weblogo service via the function weblogo() in the motifs class. Thus one needs an internet connection to use this program. The output of createlogo.py is simply a PNG file displaying the logo.
 
 % Results and Discussion can be combined.
 \section*{Results and Discussion}
@@ -236,38 +239,6 @@ Nulla mi mi, venenatis sed ipsum varius, volutpat euismod diam. Proin rutrum vel
 
 \subsection*{Subsection 2}
 \paragraph{3rd Level Heading.} Nulla mi mi, venenatis sed ipsum varius, volutpat euismod diam. Proin rutrum vel massa non gravida. Quisque tempor sem et dignissim rutrum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi at justo vitae nulla elementum commodo eu id massa. In vitae diam ac augue semper tincidunt eu ut eros. Fusce fringilla erat porttitor lectus cursus, vel sagittis arcu lobortis. Aliquam in enim semper, aliquam massa id, cursus neque. Praesent faucibus semper libero.
-
-\section*{Discussion}
-Nulla mi mi, venenatis sed ipsum varius, Table~\ref{table1} volutpat euismod diam. Proin rutrum vel massa non gravida. Quisque tempor sem et dignissim rutrum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi at justo vitae nulla elementum commodo eu id massa. In vitae diam ac augue semper tincidunt eu ut eros. Fusce fringilla erat porttitor lectus cursus, vel sagittis arcu lobortis. Aliquam in enim semper, aliquam massa id, cursus neque. Praesent faucibus semper libero.
-
-\subsection*{\lorem\ and \ipsum\ Nunc blandit a tortor.}
-
-CO\textsubscript{2} Maecenas convallis mauris sit amet sem ultrices gravida. Etiam eget sapien nibh. Sed ac ipsum eget enim egestas ullamcorper nec euismod ligula. Curabitur fringilla pulvinar lectus consectetur pellentesque. Quisque augue sem, tincidunt sit amet feugiat eget, ullamcorper sed velit. 
-
-Sed non aliquet felis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris commodo justo ac dui pretium imperdiet. Sed suscipit iaculis mi at feugiat. Ut neque ipsum, luctus id lacus ut, laoreet scelerisque urna. Phasellus venenatis, tortor nec vestibulum mattis, massa tortor interdum felis, nec pellentesque metus tortor nec nisl. Ut ornare mauris tellus, vel dapibus arcu suscipit sed. Nam condimentum sem eget mollis euismod. Nullam dui urna, gravida venenatis dui et, tincidunt sodales ex. Nunc est dui, sodales sed mauris nec, auctor sagittis leo. Aliquam tincidunt, ex in facilisis elementum, libero lectus luctus est, non vulputate nisl augue at dolor. For more information, see \nameref{S1_Text}.
-
-\section*{Supporting Information}
-
-% Include only the SI item label in the subsection heading. Use the \nameref{label} command to cite SI items in the text.
-\subsection*{S1 Video}
-\label{S1_Video}
-{\bf Bold the first sentence.}  Maecenas convallis mauris sit amet sem ultrices gravida. Etiam eget sapien nibh. Sed ac ipsum eget enim egestas ullamcorper nec euismod ligula. Curabitur fringilla pulvinar lectus consectetur pellentesque.
-
-\subsection*{S1 Text}
-\label{S1_Text}
-{\bf Lorem Ipsum.} Maecenas convallis mauris sit amet sem ultrices gravida. Etiam eget sapien nibh. Sed ac ipsum eget enim egestas ullamcorper nec euismod ligula. Curabitur fringilla pulvinar lectus consectetur pellentesque.
-
-\subsection*{S1 Fig}
-\label{S1_Fig}
-{\bf Lorem Ipsum.} Maecenas convallis mauris sit amet sem ultrices gravida. Etiam eget sapien nibh. Sed ac ipsum eget enim egestas ullamcorper nec euismod ligula. Curabitur fringilla pulvinar lectus consectetur pellentesque.
-
-\subsection*{S2 Fig}
-\label{S2_Fig}
-{\bf Lorem Ipsum.} Maecenas convallis mauris sit amet sem ultrices gravida. Etiam eget sapien nibh. Sed ac ipsum eget enim egestas ullamcorper nec euismod ligula. Curabitur fringilla pulvinar lectus consectetur pellentesque.
-
-\subsection*{S1 Table}
-\label{S1_Table}
-{\bf Lorem Ipsum.} Maecenas convallis mauris sit amet sem ultrices gravida. Etiam eget sapien nibh. Sed ac ipsum eget enim egestas ullamcorper nec euismod ligula. Curabitur fringilla pulvinar lectus consectetur pellentesque.
 
 \section*{Acknowledgments}
 Cras egestas velit mauris, eu mollis turpis pellentesque sit amet. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nam id pretium nisi. Sed ac quam id nisi malesuada congue. Sed interdum aliquet augue, at pellentesque quam rhoncus vitae.
@@ -311,7 +282,20 @@ http://www.scfbio-iitd.res.in/research/genomics.html
 \bibitem{bib6}
 Crooks GE, Hon G, Chandonia JM, Brenner SE WebLogo: A sequence logo generator, Genome Research, 14:1188-1190, (2004)
 
-http://weblogo.berkeley.edu/
+\bibitem{bib7}
+Query 1: Coding sequences for chromosome 1-22, X, Y with 15 nucleotides upstream flank, Header: Gene ID, Ensembl release 83, December 2015 © WTSI / EMBL-EBI
+
+\url{http://www.ensembl.org/biomart/martview/e8279e04f1de2a2309c53c23a7a5aa05?VIRTUALSCHEMANAME=default&ATTRIBUTES=hsapiens_gene_ensembl.default.sequences.ensembl_gene_id|hsapiens_gene_ensembl.default.sequences.coding|hsapiens_gene_ensembl.default.sequences.upstream_flank."15"&FILTERS=hsapiens_gene_ensembl.default.filters.chromosome_name."1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y"&VISIBLEPANEL=resultspanel}
+
+\bibitem{bib8}
+Query 2: Unspliced gene for chromosome 1-22, X, Y, Headers: Gene ID, gene start, gene end, Ensembl release 83, December 2015 © WTSI / EMBL-EBI
+
+\url{http://www.ensembl.org/biomart/martview/e8279e04f1de2a2309c53c23a7a5aa05?VIRTUALSCHEMANAME=default&ATTRIBUTES=hsapiens_gene_ensembl.default.sequences.ensembl_gene_id|hsapiens_gene_ensembl.default.sequences.start_position|hsapiens_gene_ensembl.default.sequences.end_position|hsapiens_gene_ensembl.default.sequences.gene_exon_intron&FILTERS=hsapiens_gene_ensembl.default.filters.chromosome_name."1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y"&VISIBLEPANEL=resultspanel}
+
+\bibitem{bib9}
+Query 3: Exon sequences for chromosome 1-22, X, Y, Headers: Gene ID, exon start, exon end, strand, Ensembl release 83, December 2015 © WTSI / EMBL-EBI
+
+\url{http://www.ensembl.org/biomart/martview/e8279e04f1de2a2309c53c23a7a5aa05?VIRTUALSCHEMANAME=default&ATTRIBUTES=hsapiens_gene_ensembl.default.sequences.ensembl_gene_id|hsapiens_gene_ensembl.default.sequences.gene_exon|hsapiens_gene_ensembl.default.sequences.exon_chrom_start|hsapiens_gene_ensembl.default.sequences.exon_chrom_end|hsapiens_gene_ensembl.default.sequences.strand&FILTERS=hsapiens_gene_ensembl.default.filters.chromosome_name."1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y"&VISIBLEPANEL=resultspanel}
 
 \end{thebibliography}
 
