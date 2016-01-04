@@ -38,19 +38,19 @@ echo "...done!"
 # sequences specified by coordinates and strand in $exons.
 echo "INTRON SEQUENCES"
 echo "Extracting first intron, 15 nucleotides upstream/downstream..."
-./mergeseq.py -us 15 -ds 15 -c 1 -s $usg -ss $exons -o output/usg_intr_1.fa
+./mergeseq.py -us 15 -ds 15 -c 1 -s $usg -ss $exons -o usg_intr_1.fa
 echo "..done!"
 echo "Extracting first 30 nucleotides from intron..."
-./cutseq.py -l 30 -o output/usg_intr_1_us_15.fa output/usg_intr_1.fa
+./cutseq.py -l 30 -o usg_intr_1_us_15.fa usg_intr_1.fa
 echo "...done!"
 echo "Extracting last 30 nucleotides from intron..."
-./cutseq.py -l -30 -o output/usg_intr_1_ds_15.fa output/usg_intr_1.fa
+./cutseq.py -l -30 -o usg_intr_1_ds_15.fa usg_intr_1.fa
 echo "...done!"
 # Create upstream logo
 echo "Creating intron upstream logo..."
-./createlogo.py -y 2 -o output/logo_usg_intr_1_us_15.png output/usg_intr_1_us_15.fa
+./createlogo.py -y 2 -o logo_usg_intr_1_us_15.png usg_intr_1_us_15.fa
 echo "...done!"
 # Create downstream logo
 echo "Creating intron downstream logo..."
-./createlogo.py -o output/logo_usg_intr_1_ds_15.png output/usg_intr_1_ds_15.fa
+./createlogo.py -o logo_usg_intr_1_ds_15.png usg_intr_1_ds_15.fa
 echo "...done!"
