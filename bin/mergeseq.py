@@ -28,14 +28,17 @@ class Sequences:
 			try:
 				coord = [(int(parts[self.start]),int(parts[self.end]))]
 				id = parts[self.id]
+				# Store strand of of sequence
 				self.positions[id] = int(parts[self.strand])
+				# Add coordinate for current sequence in list
 				if id in self.meta: self.meta[id] += coord
 				else: self.meta[id] = coord
 			except:
 				raise Exception('Error parsing header '+seq.id+' in file '+name+'\nDid you specify the header structure properly?')
 		if len(self.meta) == 0: raise Exception('No sequences where found in subsequence file!')
 		return self
-
+	
+	# Create unions and complements according to coordinates stored in self.meta
 	def regions(self, gene):
 		coordinates = self.meta[gene]
 		coordinates.sort()
@@ -55,18 +58,18 @@ class Sequences:
 
 class MergeSeq:
 	def __init__(self, geneResources, exonResources, format='fasta'):
-		self.genes = Sequences(geneResources, format)#.setPos('id', 1).setPos('start', 2).setPos('end', 3)
-		self.seqs = Sequences(exonResources, format)#.setPos('id', 1).setPos('start', 2).setPos('end', 3).setPos('strand', 5).parseMeta()
+		self.seqs = Sequences(geneResources, format)
+		self.subseqs = Sequences(exonResources, format)
 		self.format = format
 		self.errors = []
 	
 	# Pad string with a character to desired width
-	def pad(self, seq, start, geneLen, pad='-'):
+	def _pad(self, seq, start, geneLen, pad='-'):
 		endAdd = geneLen - start - len(seq)
 		return pad * start + seq + pad * endAdd + '\n'
 
 	# Convert string to FASTA format
-	def toFASTA(self, seq, width=60):
+	def _toFASTA(self, seq, width=60):
 		o = ''
 		end = '\n'
 		a = 0
@@ -95,11 +98,11 @@ class MergeSeq:
 		seqKeys = ['id', 'start', 'end', 'strand']
 		i = 0
 		for  p in seq:
-			self.genes.setPos(seqKeys[i], p)
+			self.seqs.setPos(seqKeys[i], p)
 			i += 1
 		i = 0
 		for p in subseq:
-			self.seqs.setPos(seqKeys[i], p)
+			self.subseqs.setPos(seqKeys[i], p)
 			i += 1
 		return self
 		
@@ -178,16 +181,16 @@ class MergeSeq:
 	# Iterate through all sequences
 	def _parseGenes(self):
 		o = ''
-		for fname,gene in self.genes._parse():
+		for fname,gene in self.seqs._parse():
 			try:
 				metaParts = gene.id.split('|')
-				geneName = metaParts[self.genes.id]
+				geneName = metaParts[self.seqs.id]
 				if self.selectedGenes == False or geneName in self.selectedGenes:
-					geneStart = int(metaParts[self.genes.start])
-					geneEnd = int(metaParts[self.genes.end])
+					geneStart = int(metaParts[self.seqs.start])
+					geneEnd = int(metaParts[self.seqs.end])
 					#self.outfile.write('>'+geneName + '\n' + self.toFASTA(str(gene.seq)) +'\n')
-					exons,introns = self.seqs.regions(geneName)
-					strand = self.seqs.positions[geneName]
+					exons,introns = self.subseqs.regions(geneName)
+					strand = self.subseqs.positions[geneName]
 					# Set sorting: When gene is on minus strand, sorting needs to be descending
 					rev = False
 					if strand == -1: rev = True
@@ -210,7 +213,7 @@ class MergeSeq:
 		if regions != []:
 			for a,b in regions:
 				if (type=='INTRON' and (self.getComplements==True or p in self.getComplements)) or (type=='EXON' and (self.getUnions==True or p in self.getUnions)):
-					o += '>' + name + '|' + type + '_' + str(p) + '\n' + self.toFASTA(self._getSeq(seq, geneStart, geneEnd, a, b, strand))
+					o += '>' + name + '|' + type + '_' + str(p) + '\n' + self._toFASTA(self._getSeq(seq, geneStart, geneEnd, a, b, strand))
 				p += 1
 		return o
 	
@@ -229,7 +232,7 @@ class MergeSeq:
 		return seq[a-self.upstream:b+self.downstream]
 	
 	def __str__(self):
-		self.seqs.parseMeta()
+		self.subseqs.parseMeta()
 		return self._parseGenes()
 	
 def main():
