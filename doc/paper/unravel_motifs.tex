@@ -216,7 +216,20 @@ We retrieved the whole unspliced genes for chromosomes 1-22, X, Y and the Exon s
 \subsection*{Processing gene data}
 Using the data from the previous section we now continue by filtering out the sequences to use as a base for the logo. We then need to align them in a text file in preparation for the logo creation. We implement all this using Python and the two programs doing all the work for this part are \href{https://github.com/jolo2486/unravel_motifs/blob/master/bin/mergeseq.py}{mergeseq.py} and \href{https://github.com/jolo2486/unravel_motifs/blob/master/bin/cutseq.py}{cutseq.py}.
 
--HIS EXCELLENCY ANDREAS CONTINUES HERE BY EXPLAINING IN MORE DETAIL ABOUT OUR ALGORITHM FOR THIS-
+As the extraction of coding sequences of already includes 15 nucleotides upstream the only task nescessary to retrieve motifs around the coding start site was to cut each sequence at a desired length. These operations are performed by \textit{cutseq}. Exons are only provided as they appear in transcripts, thus they do not individually define exon regions in the unspliced gene. The program \textit{mergeseq} solves this by using exon coordinates for each transcript and the gene strand on which it resides. Coordinates are provided as base pair start and end for the gene or exon which ignores that sequences of genes on the negative (antisense) strand are still provided in the $5'\rightarrow 3'$ direction. For a gene, $G^+$, on the positive (sense) strand the start, $s$, and end, $e$, position of a subsequence, $g^+$, relative to the chromosome coordinates $G^+_a$ and $G^+_b$ will be: $g^+_s = g^+_a - G^+_a+1$ and $g^+_e = g^+_b - G^+_a+1$. For a gene on the negative strand, $G^-$, we get start $g^-_s = G^-_b - g^-_b+1$ and end $g^-_e = G^-_b - g^-_a+1$. An example is given in \ref{figGene}.
+\begin{figure}[h]
+\begin{center}
+\begin{tabular}{c c c c c c c c c c}
+base pair & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & \\
+5' & A & \textbf{C} & \textbf{G} & \textbf{A} & T & C & C & A & 3'\\
+3' & T & G & C & T & \textbf{A} & \textbf{G} & \textbf{G} & T & 5'\\
+\end{tabular}
+\end{center}
+\caption{As can be seen the example sequence above would have has $G^{+,-}_a=5$ and $G^{+,-}_b=12$ while the subsequence (in bold) on the positive strand goes \textbf{C-G-A} and has the relative start $g^+_s = 6-5+1 = 2$ and end $g^+_e=8-5+1=4$. The subsequence on the negative strand reads \textbf{G-G-A} with start $g^-_s=12-11+1=2$ and end $g^-_e=12-9+1=4$.}
+\label{figGene}
+\end{figure}
+
+The nescessary task to retrieve the first intron is thus to merge all overlapping exon coordinates and create a set of all disjunct regions. For a gene $G$ with $n$ of these exon regions $e_{g,i,a}$,$ e_{g,i,b}$ indexed $i$ as they appear in the unspliced $5'\rightarrow 3'$ there are $n-2$ intron regions (as each gene ends with an exon) where the first intron has the start and end position $e_{g,1,b+1}$, $e_{g,2,a-1}$ respectively.
 
 \subsection*{Creating sequence logos}
 For sequence logo creation there are a few tools at our disposal. We choose to use Steven Brenner's WebLogo \cite{bib6} for its simplicity and the possibility of accessing this tool via the function weblogo() in the Biopython class motifs. Weblogo is mainly used through their web application which we initially used for experimental purposes. It can also be used by downloading their source code, by using their python package or from a third party software such as Biopython. We choose to implement this using the above mentioned function weblogo() in Biopython. Weblogo uses a multiple sequence alignment as a basis for logo creation. Three file formats for these alignments are available: FASTA, ClustalW and Flat. Flat format means that the sequences are just listed on top of each other without sequence names or other header information. Since we had no use for header information at this point, flat format was definitely most suited for our purposes. The simplicity of the flat format also made scripting a bit simpler.
