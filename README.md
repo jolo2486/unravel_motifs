@@ -1,5 +1,5 @@
 # unravel_motifs
-Creating so called [sequence logos][1] for UTRs and introns of genes in the human genome.
+Creating [sequence logos][1] for UTRs and introns of genes in the human genome.
 More information, such as instructions for reproducing our results and the [lab notebook][3] for this project, can be found in the [wiki][2]. A pdf of the final report is [here][4].
 
 [1]: https://en.wikipedia.org/wiki/Sequence_logo
